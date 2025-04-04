@@ -601,7 +601,7 @@ def logout():
     return redirect(url_for('home'))
 
 @app.route('/register/<user_type>', methods=['GET', 'POST'])
-async def register(user_type):
+def register(user_type):
     if request.method == 'POST':
         data = request.form.to_dict()
         data['password'] = request.form.get('password')  # Add password field
@@ -917,6 +917,7 @@ async def chat():
             "response": chat_completion.choices[0].message.content
         })
     except Exception as e:
+        app.logger.error(f"Chat error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/donate', methods=['GET', 'POST'])
@@ -924,64 +925,21 @@ async def donate():
     if request.method == 'POST':
         data = request.form.to_dict()
         data['location'] = {
-            'lat': float(data.get('latitude')),
-            'lng': float(data.get('longitude'))
+            'latitude': float(request.form.get('latitude')),
+            'longitude': float(request.form.get('longitude'))
         }
+        data['timestamp'] = datetime.now().isoformat()
         
-        # Check food quality
-        food_quality_ok = analyze_food_quality(data['food_type'], float(data['shelf_life']))
+        # Find best recipient using AI
+        best_recipient = await find_best_recipient(data)
         
-        if not food_quality_ok:
-            # Find nearest biogas plant
-            nearest = find_nearest_gobar_plant(data['location']['lat'], data['location']['lng'])
-            
-            flash('Food quality check failed. Redirecting to nearest biogas plant.', 'warning')
-            return redirect(url_for('map', highlight_plant=nearest['plant']['name']))
-        
-        # Find best recipient
-        recipient_email = find_best_recipient(data)
-        if not recipient_email:
-            flash('No suitable recipients found in your area. Please try again later or consider our biogas plant options.', 'warning')
-            return redirect(url_for('map'))
-            
-        if recipient_email in RECIPIENTS:
-            # Add donation to the list
-            donation_data = {
-                'id': len(DONATIONS) + 1,
-                'date': datetime.now().strftime('%Y-%m-%d %H:%M'),
-                'donor_name': DONORS.get(data.get('donor_email', ''), {}).get('name', 'Anonymous'),
-                'donor_phone': data.get('donor_phone', 'N/A'),
-                'recipient_name': RECIPIENTS[recipient_email]['name'],
-                'items': data['food_type'],
-                'quantity': data.get('quantity', 'N/A'),
-                'status': 'pending'
-            }
-            DONATIONS.append(donation_data)
-            
-            # Send notification to recipient
-            subject = "New Food Donation Available"
-            body = f"""
-Dear {RECIPIENTS[recipient_email]['name']},
-
-A new food donation is available:
-
-Food Type: {data['food_type']}
-Quantity: {data['quantity']} servings
-Available Until: {data['availability_time']}
-Location: {data['address']}
-
-Please respond quickly to claim this donation.
-
-Best regards,
-Food Donation Platform Team
-"""
-            await send_notification_email(recipient_email, subject, body)
-            flash('Donation successful! The recipient has been notified.', 'success')
+        if best_recipient:
+            flash('Successfully matched with recipient!', 'success')
+            return redirect(url_for('donor_dashboard'))
         else:
-            flash('No suitable recipient found at this time.', 'warning')
-        
-        return redirect(url_for('home'))
-    
+            flash('No suitable recipient found at this time.', 'error')
+            return redirect(url_for('donate'))
+            
     return render_template('donate.html')
 
 @app.route('/api/analyze-food', methods=['POST'])
@@ -1007,8 +965,8 @@ def find_best_recipient(donation):
     if not RECIPIENTS:
         return None
         
-    donor_lat = donation['location']['lat']
-    donor_lng = donation['location']['lng']
+    donor_lat = donation['location']['latitude']
+    donor_lng = donation['location']['longitude']
     donation_time = datetime.strptime(donation['pickup_time'], '%Y-%m-%dT%H:%M')
     
     # Calculate distances and find recipients within 10km radius
