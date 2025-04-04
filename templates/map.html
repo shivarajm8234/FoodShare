@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="h-screen flex flex-col">
+    <div class="p-4 bg-white shadow">
+        <h1 class="text-2xl font-bold text-gray-800">Biogas Plants Map</h1>
+        <p class="text-gray-600">Find nearby biogas plants for food waste processing</p>
+    </div>
+    
+    <div class="flex-1 relative">
+        <div id="map" class="w-full h-full"></div>
+        
+        <!-- Plant Details Popup -->
+        <div id="plant-details" class="hidden fixed right-4 top-20 bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto z-50">
+            <h2 id="plant-name" class="text-xl font-bold text-gray-800 mb-4"></h2>
+            <div id="plant-info" class="space-y-3 text-gray-600"></div>
+            <button onclick="closePlantDetails()" 
+                    class="mt-4 w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-green-600">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+<script>
+    // Initialize map centered on Bangalore
+    const map = L.map('map').setView([12.9716, 77.5946], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: ' OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Get plant data from Flask
+    const plantData = {{ plants|tojson|safe }};
+    
+    // Custom icon for biogas plants
+    const plantIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+        shadowSize: [41, 41],
+        shadowAnchor: [12, 41]
+    });
+
+    // Add markers for each plant
+    plantData.forEach(plant => {
+        const marker = L.marker([plant.latitude, plant.longitude], { icon: plantIcon })
+            .addTo(map);
+            
+        // Create popup content
+        const popupContent = document.createElement('div');
+        popupContent.innerHTML = `
+            <h3 class="font-bold mb-2">${plant.name}</h3>
+            <p class="mb-2">${plant.description}</p>
+            <button onclick="showPlantDetails(${JSON.stringify(plant)})" 
+                    class="bg-primary text-white px-4 py-2 rounded hover:bg-green-600 w-full">
+                View Details
+            </button>
+        `;
+        
+        marker.bindPopup(popupContent);
+    });
+
+    function showPlantDetails(plant) {
+        const detailsDiv = document.getElementById('plant-details');
+        const nameEl = document.getElementById('plant-name');
+        const infoEl = document.getElementById('plant-info');
+
+        nameEl.textContent = plant.name;
+        infoEl.innerHTML = `
+            <div class="bg-green-50 p-4 rounded-lg mb-4">
+                <p class="text-lg font-semibold text-green-800">Processing Capacity</p>
+                <p class="text-2xl font-bold text-green-600">${plant.capacity} kg/day</p>
+            </div>
+            <div class="space-y-2">
+                <p><strong>Contact Person:</strong> ${plant.contact_person}</p>
+                <p><strong>Phone:</strong> <a href="tel:${plant.phone}" class="text-primary hover:underline">${plant.phone}</a></p>
+                <p><strong>Email:</strong> <a href="mailto:${plant.email}" class="text-primary hover:underline">${plant.email}</a></p>
+                <p><strong>Address:</strong> ${plant.address}</p>
+                <p><strong>Description:</strong> ${plant.description}</p>
+            </div>
+        `;
+
+        detailsDiv.classList.remove('hidden');
+    }
+
+    function closePlantDetails() {
+        document.getElementById('plant-details').classList.add('hidden');
+    }
+</script>
+{% endblock %}

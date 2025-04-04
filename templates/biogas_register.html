@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Register Biogas Plant</h1>
+    
+    <form method="POST" class="bg-white shadow-lg rounded-lg p-6">
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                    Plant Name
+                </label>
+                <input type="text" name="name" id="name" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="capacity">
+                    Daily Processing Capacity (kg)
+                </label>
+                <input type="number" name="capacity" id="capacity" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="contact_person">
+                    Contact Person
+                </label>
+                <input type="text" name="contact_person" id="contact_person" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">
+                    Contact Number
+                </label>
+                <input type="tel" name="phone" id="phone" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    Email
+                </label>
+                <input type="email" name="email" id="email" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="address">
+                    Address
+                </label>
+                <textarea name="address" id="address" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                    rows="3"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="latitude">
+                        Latitude
+                    </label>
+                    <input type="number" step="any" name="latitude" id="latitude" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="longitude">
+                        Longitude
+                    </label>
+                    <input type="number" step="any" name="longitude" id="longitude" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                    Plant Description
+                </label>
+                <textarea name="description" id="description" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                    rows="4"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" 
+            class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:shadow-outline">
+            Register Plant
+        </button>
+    </form>
+</div>
+{% endblock %}

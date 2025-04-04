@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="relative bg-cover bg-center h-[600px] -mt-4"
+        style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80')">
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center text-white px-4">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Share Food, Share Love</h1>
+                <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+                    Join our mission to redistribute surplus food to those in need while reducing waste
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/donate" class="bg-primary text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-green-600 transition-colors">
+                        Donate Food
+                    </a>
+                    <a href="/register/recipient" class="bg-white text-primary px-8 py-3 rounded-full text-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Receive Food
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-16 px-4 max-w-7xl mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4l4 4-4 4m0 0l-4-4 4-4m8 8l-4 4-4-4m4 4h-8" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Register & Donate</h3>
+                <p class="text-gray-600">Sign up as a donor and easily submit your food donations through our platform</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10V5a1 1 0 00-1-1h-4a1 1 0 00-1 1v5m-2 0h4m4 4h7m-7 0H5m5 0H5m-2 2h4m9 0v2a5 5 0 11-10 0v-2" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Real-time Matching</h3>
+                <p class="text-gray-600">Our AI system matches donations with recipients based on location and timing</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v2a3 3 0 101 2.828m-2 4a9 9 0 111-9m1 5h2m0 0a11.3 11.3 0 00-.5-3 15.5 15.5 0 00-2.5-4 17.2 17.2 0 00-2.5 4 11.3 11.3 0 00-.5 3H7m4 2h2m-6 0h2m0 0h2M16 15h1" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Efficient Distribution</h3>
+                <p class="text-gray-600">Choose from multiple transport options to ensure food reaches those in need</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impact Section -->
+    <div class="bg-primary text-white py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">1000+</h3>
+                    <p class="text-xl">Meals Shared</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">500+</h3>
+                    <p class="text-xl">Active Donors</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">50+</h3>
+                    <p class="text-xl">Partner Organizations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

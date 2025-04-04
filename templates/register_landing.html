@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-12">
+    <h1 class="text-4xl font-bold text-center text-gray-800 mb-12">Choose Registration Type</h1>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+        <!-- Donor Registration Card -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-primary mb-4">Register as Donor</h2>
+                <p class="text-gray-600 mb-6">Join our network of food donors and help reduce food waste while supporting those in need.</p>
+                <div class="space-y-4">
+                    <a href="/register/donor" class="block w-full bg-primary text-white text-center py-3 rounded-lg hover:bg-green-600">
+                        Food Donation Registration
+                    </a>
+                    <a href="/register/biogas" class="block w-full border-2 border-primary text-primary text-center py-3 rounded-lg hover:bg-green-50">
+                        Biogas Plant Registration
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipient Registration Card -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-2xl font-bold text-secondary mb-4">Register as Recipient</h2>
+                <p class="text-gray-600 mb-6">Register your organization to receive food donations and make a difference in your community.</p>
+                <a href="/register/recipient" class="block w-full bg-secondary text-white text-center py-3 rounded-lg hover:bg-blue-600">
+                    Register Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Donate Food</h1>
+    
+    <!-- Donation Form -->
+    <form class="bg-white shadow-lg rounded-lg p-6" id="donationForm">
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="donor_email">
+                    Email Address
+                </label>
+                <input type="email" name="donor_email" id="donor_email" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="food_type">
+                    Food Type
+                </label>
+                <select name="food_type" id="food_type" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                    <option value="">Select food type...</option>
+                    <option value="sweets">Sweets & Desserts</option>
+                    <option value="cooked">Cooked Food</option>
+                    <option value="raw">Raw Food</option>
+                    <option value="packaged">Packaged Food</option>
+                    <option value="beverages">Beverages</option>
+                    <option value="high-protein">High-Protein Food</option>
+                    <option value="child-friendly">Child-Friendly Food</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">
+                    Quantity (kg)
+                </label>
+                <input type="number" name="quantity" id="quantity" required min="1"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                    Description
+                </label>
+                <textarea name="description" id="description" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                    rows="2" placeholder="Please describe the food items, e.g., '20 boxes of fresh sandwiches'"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="pickup_time">
+                    Pickup Time
+                </label>
+                <input type="datetime-local" name="pickup_time" id="pickup_time" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="address">
+                    Pickup Address
+                </label>
+                <textarea name="address" id="address" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                    rows="2"></textarea>
+            </div>
+
+            <!-- Hidden location fields -->
+            <input type="hidden" name="pickup_latitude" id="latitude">
+            <input type="hidden" name="pickup_longitude" id="longitude">
+
+            <div class="bg-blue-100 p-4 rounded-lg">
+                <p class="text-blue-800 text-sm" id="locationStatus">
+                    Please allow location access to find the nearest collection point.
+                </p>
+            </div>
+        </div>
+
+        <button type="submit" 
+            class="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 focus:outline-none focus:shadow-outline">
+            Submit Donation
+        </button>
+    </form>
+
+    <!-- Loading and Recipient Selection Process -->
+    <div id="processingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+            <div class="text-center">
+                <div id="loadingSpinner" class="inline-block">
+                    <svg class="animate-spin h-12 w-12 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold mt-4 mb-2" id="processingStatus">Finding Best Recipient...</h3>
+                <div id="processingSteps" class="text-left mt-4 space-y-2">
+                    <div class="flex items-center" id="step1">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                        </div>
+                        <span>Analyzing food type and preferences</span>
+                    </div>
+                    <div class="flex items-center" id="step2">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                        </div>
+                        <span>Checking recipient availability</span>
+                    </div>
+                    <div class="flex items-center" id="step3">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                        </div>
+                        <span>Calculating distances</span>
+                    </div>
+                    <div class="flex items-center" id="step4">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                        </div>
+                        <span>Making final selection</span>
+                    </div>
+                </div>
+                <div id="matchResult" class="mt-4 hidden">
+                    <div class="bg-green-100 p-4 rounded-lg">
+                        <p class="text-green-800 font-semibold">Best Match Found!</p>
+                        <p id="recipientName" class="text-green-700"></p>
+                        <p id="matchReason" class="text-sm text-green-600 mt-2"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('donationForm');
+    const locationStatus = document.getElementById('locationStatus');
+    const latitudeInput = document.getElementById('latitude');
+    const longitudeInput = document.getElementById('longitude');
+    const processingOverlay = document.getElementById('processingOverlay');
+    const processingStatus = document.getElementById('processingStatus');
+    const matchResult = document.getElementById('matchResult');
+
+    // Set minimum datetime-local to current time
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('pickup_time').min = now.toISOString().slice(0, 16);
+
+    // Get user's location
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            latitudeInput.value = position.coords.latitude;
+            longitudeInput.value = position.coords.longitude;
+            locationStatus.textContent = "Location detected successfully";
+            locationStatus.className = "text-green-800 text-sm";
+        }, function(error) {
+            locationStatus.textContent = "Error getting location: " + error.message;
+            locationStatus.className = "text-red-800 text-sm";
+        });
+    } else {
+        locationStatus.textContent = "Geolocation is not supported by your browser";
+        locationStatus.className = "text-red-800 text-sm";
+    }
+
+    // Helper function to update step status
+    function updateStep(stepId, status) {
+        const step = document.getElementById(stepId);
+        const dot = step.querySelector('.w-2');
+        const border = step.querySelector('.border-2');
+        
+        if (status === 'active') {
+            dot.className = 'w-2 h-2 rounded-full bg-blue-500 animate-pulse';
+            border.className = 'w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center mr-3';
+        } else if (status === 'complete') {
+            dot.className = 'w-2 h-2 rounded-full bg-green-500';
+            border.className = 'w-6 h-6 rounded-full border-2 border-green-500 flex items-center justify-center mr-3';
+        }
+    }
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validate location
+        if (!latitudeInput.value || !longitudeInput.value) {
+            alert("Please allow location access to continue. This helps us find the nearest recipient.");
+            return;
+        }
+        
+        processingOverlay.classList.remove('hidden');
+        processingOverlay.classList.add('flex');
+
+        // Convert form data to JSON
+        const formData = new FormData(form);
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            // Convert number fields to numbers
+            if (key === 'quantity') {
+                data[key] = parseFloat(value);
+            } else if (key === 'pickup_latitude' || key === 'pickup_longitude') {
+                data[key] = parseFloat(value);
+            } else {
+                data[key] = value;
+            }
+        }
+
+        try {
+            // Step 1: Analyzing preferences
+            updateStep('step1', 'active');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            updateStep('step1', 'complete');
+
+            // Step 2: Checking availability
+            updateStep('step2', 'active');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            updateStep('step2', 'complete');
+
+            // Step 3: Calculating distances
+            updateStep('step3', 'active');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            updateStep('step3', 'complete');
+
+            // Step 4: Final selection
+            updateStep('step4', 'active');
+            
+            // Make the actual API call
+            const response = await fetch('/submit_donation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                updateStep('step4', 'complete');
+                processingStatus.textContent = 'Recipient Found!';
+                
+                // Show match result
+                document.getElementById('recipientName').textContent = result.recipient_name;
+                document.getElementById('matchReason').textContent = result.match_reason;
+                matchResult.classList.remove('hidden');
+
+                // Redirect after showing result
+                setTimeout(() => {
+                    window.location.href = '/donor_dashboard';
+                }, 3000);
+            } else {
+                throw new Error(result.error || 'Failed to find recipient');
+            }
+        } catch (error) {
+            processingStatus.textContent = 'Error: ' + error.message;
+            processingStatus.className = 'text-xl font-bold mt-4 mb-2 text-red-600';
+        }
+    });
+});
+</script>
+{% endblock %}
